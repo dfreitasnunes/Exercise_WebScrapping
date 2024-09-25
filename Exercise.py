@@ -1,18 +1,14 @@
 # Exercise.py
-
-# I don't have accesss in this pc to do this trough pip install, had to download the libraries manually
 import sys
+sys.path.append('Lib')
 
-# Add a specific directory to the sys.path
-sys.path.append('.venv/Lib')
-
-# Now you can import modules from this dir
 
 import requests
 import zipfile
 import os
 from bs4 import BeautifulSoup
 
+# https://servicodados.ibge.gov.br/api/v1/downloads/estatisticas?caminho=Censos/Censo_Demografico_1991/Indice_de_Gini&nivel=1
 
 class WebScraper:
     def __init__(self, url):
@@ -35,20 +31,22 @@ class WebScraper:
         if self.response is not None:
             # Using html.parser , trouble in using lxml 
             self.soup = BeautifulSoup(self.response.content, 'html.parser') 
-            #print(BeautifulSoup(self.response.content, 'html.parser') ) 
             print("Content parsed successfully!")
+            print(self.soup)
         else:
             print("No content to parse. Did you fetch the content first?")
 
-    def extract_data(self, tag, class_name=None):
+    def extract_data(self):
         #Extract specific data from the parsed HTML based on tag and class.
         if self.soup is not None:
-            elements = self.soup.find_all(tag, class_=class_name)
+            elements = self.soup.find_all('li', {'id' :'Censos/Censo_Demografico_1991/Indice_de_Gini'})
+            if not elements:
+                return print('falhoupah')
             return self.soup.find_all(tag, class_=class_name)
         else:
             print("No parsed content found. Please parse the content first.")
             return []
-        
+
     def extract_zip_links(self):
         # Use extract_data to get all anchor tags for <a>
         anchors = self.extract_data('a')
@@ -61,7 +59,10 @@ class WebScraper:
                 zip_links.append(href)
         
         return zip_links
-    
+   
+
+
+
     def read_zip_contents(self, zip_path):
         # Check if the file exists
         if not os.path.exists(zip_path):
@@ -90,41 +91,56 @@ def main():
     # Fetch and parse the content
     scraper.fetch_content()
     scraper.parse_content()
+    #print(scraper.extract_data())
     # Extract all the zip links
-    zip_links = scraper.extract_zip_links()
+    #zip_links = scraper.extract_zip_links('Censo_Demografico_1991')
+    #print(zip_links)
+    
+    
     # To hold the combined content from all zip files
-    all_zip_contents = {}
+
+    #all_zip_contents = {}
 
     # Loop through each zip link and read its contents
-    for zip_link in zip_links:
-        print(f"Processing zip link: {zip_link}")
+    #for zip_link in zip_links:
+        #print(f"Processing zip link: {zip_link}")
         # Here you might want to download the zip file first, e.g., using requests
-        response = requests.get(zip_link)
-        zip_file_path = zip_link.split('/')[-1]  # Extract filename from URL
+        #response = requests.get(zip_link)
+        #zip_file_path = zip_link.split('/')[-1]  # Extract filename from URL
 
         # Save the downloaded zip file
-        with open(zip_file_path, 'wb') as f:
-            f.write(response.content)
+        #with open(zip_file_path, 'wb') as f:
+            #f.write(response.content)
 
         # Read the contents of the downloaded zip file
-        zip_contents = {}
-        with zipfile.ZipFile(zip_file_path, 'r') as zip_file:
-            for file_info in zip_file.infolist():
-                with zip_file.open(file_info) as file:
-                    content = file.read()
-                    zip_contents[file_info.filename] = content.decode('utf-8', errors='replace')
+        #zip_contents = {}
+        #with zipfile.ZipFile(zip_file_path, 'r') as zip_file:
+            #for file_info in zip_file.infolist():
+                #with zip_file.open(file_info) as file:
+                    #content = file.read()
+                    #zip_contents[file_info.filename] = content.decode('utf-8', errors='replace')
 
-        all_zip_contents[zip_file_path] = zip_contents
+        #all_zip_contents[zip_file_path] = zip_contents
+
+        # Delete the zip file after processing
+        #os.remove(zip_file_path)
 
         # Now all_zip_contents holds the data from all processed zip files
-        print("Combined contents from all zip files:")
-        for zip_name, contents in all_zip_contents.items():
-            print(f"\nContents of {zip_name}:")
-            for filename, content in contents.items():
-                print(f"\nFile: {filename}\nContent:\n{content[:100]}...")  # Print the first 100 chars of each file
+        #print("Combined contents from all zip files:")
+        #for zip_name, contents in all_zip_contents.items():
+            #print(f"\nContents of {zip_name}:")
+            #for filename, content in contents.items():
+                #print(f"\nFile: {filename}\nContent:\n{content[:100]}...")  # Print the first 100 chars of each file
 
+    # Write all contents to a file
+    #output_file_path = 'extracted_contents.txt'
+    #with open(output_file_path, 'w', encoding='utf-8') as output_file:
+        #for zip_name, contents in all_zip_contents.items():
+            #output_file.write(f"Contents of {zip_name}:\n")
+            #for filename, content in contents.items():
+                #output_file.write(f"\nFile: {filename}\nContent:\n{content}\n")
+            #output_file.write("\n" + "="*40 + "\n")  # Separator between zip file contents
     
-    print(all_zip_contents)
 
 if __name__ == "__main__":
     main()
