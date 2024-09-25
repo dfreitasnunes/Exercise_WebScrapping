@@ -40,7 +40,7 @@ class ZipLinkScraper:
 
 
 def main():
-    driver_path = 'chromedriver-win64\chromedriver.exe'  # Update this path
+    driver_path = r'C:\Users\diogo.nunes\Desktop\Empresa\python\Exercise\Exercise_WebScrapping\chromedriver-win64\chromedriver.exe'  # Update this path
     url = 'https://www.ibge.gov.br/estatisticas/sociais/populacao/22827-censo-demografico-1991.html?=&t=downloads'  # Update this URL
 
     scraper = ZipLinkScraper(driver_path, url)

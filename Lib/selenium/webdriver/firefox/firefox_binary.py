@@ -29,7 +29,6 @@ from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common import utils
 
 
-@deprecated("Use binary_location property in Firefox Options to set location")
 class FirefoxBinary:
     NO_FOCUS_LIBRARY_NAME = "x_ignore_nofocus.so"
 

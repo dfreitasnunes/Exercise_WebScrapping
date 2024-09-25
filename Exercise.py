@@ -8,7 +8,7 @@ import zipfile
 import os
 from bs4 import BeautifulSoup
 
-# https://servicodados.ibge.gov.br/api/v1/downloads/estatisticas?caminho=Censos/Censo_Demografico_1991/Indice_de_Gini&nivel=1
+
 
 class WebScraper:
     def __init__(self, url):

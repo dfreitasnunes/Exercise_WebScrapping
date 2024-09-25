@@ -51,13 +51,12 @@ class Options(ArgOptions):
         self.log = Log()
 
     @property
-    @deprecated("use binary_location instead")
+
     def binary(self) -> FirefoxBinary:
         """Returns the FirefoxBinary instance."""
         return FirefoxBinary(self._binary_location)
 
     @binary.setter
-    @deprecated("use binary_location instead")
     def binary(self, new_binary: Union[str, FirefoxBinary]) -> None:
         """Sets location of the browser binary, either by string or
         ``FirefoxBinary`` instance."""
